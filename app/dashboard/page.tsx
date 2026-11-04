@@ -42,7 +42,7 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div style={{ padding: '32px' }}>
+    <div style={{ padding: '32px', maxWidth: '900px' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
         <div>
@@ -60,6 +60,23 @@ export default function DashboardPage() {
           New Job
         </Link>
       </div>
+
+      {/* Stats tiles */}
+      {jobs.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
+          {[
+            { label: 'Active jobs', value: jobs.filter(j => !['paid'].includes(j.status)).length, color: 'var(--fg)' },
+            { label: 'In progress', value: jobs.filter(j => j.status === 'in_progress').length, color: 'var(--green)' },
+            { label: 'Awaiting invoice', value: jobs.filter(j => j.status === 'awaiting_invoice').length, color: 'var(--amber)' },
+            { label: 'Total value', value: `€${jobs.reduce((s, j) => s + (j.amount ?? 0), 0).toLocaleString()}`, color: 'var(--green)' },
+          ].map(stat => (
+            <div key={stat.label} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px 16px' }}>
+              <p style={{ fontSize: '.75rem', fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: 'var(--fg-soft)', marginBottom: '6px' }}>{stat.label}</p>
+              <p style={{ fontSize: '1.4rem', fontWeight: 700, color: stat.color, fontVariantNumeric: 'tabular-nums' }}>{stat.value}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Alert if jobs awaiting invoice */}
       {awaitingCount > 0 && (
