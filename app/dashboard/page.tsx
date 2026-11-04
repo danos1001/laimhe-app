@@ -42,7 +42,7 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div style={{ padding: '32px', maxWidth: '900px' }}>
+    <div style={{ padding: '32px', maxWidth: '900px', marginRight: 'auto' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
         <div>
@@ -95,7 +95,7 @@ export default function DashboardPage() {
       )}
 
       {/* Filter chips */}
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px', justifyContent: 'flex-start' }}>
         {filters.map(f => (
           <button key={f.key} onClick={() => setFilter(f.key)} style={{
             padding: '6px 16px', borderRadius: '100px', fontSize: '.82rem', fontWeight: 600,
