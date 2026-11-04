@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import { supabase, Job, STATUS_LABELS, STATUS_COLOURS } from '@/lib/supabase'
 import Link from 'next/link'
 
-function getWeekDays(): Date[] {
+function getWeekDays(offset: number): Date[] {
   const today = new Date()
   const dow = today.getDay()
   const monday = new Date(today)
-  monday.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1))
+  monday.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1) + offset * 7)
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(monday)
     d.setDate(monday.getDate() + i)
@@ -23,14 +23,9 @@ export default function SchedulePage() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [weekOffset, setWeekOffset] = useState(0)
+  const [today] = useState(() => new Date())
 
-  const baseWeek = getWeekDays()
-  const week = baseWeek.map(d => {
-    const nd = new Date(d)
-    nd.setDate(d.getDate() + weekOffset * 7)
-    return nd
-  })
-  const today = new Date()
+  const week = getWeekDays(weekOffset)
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {

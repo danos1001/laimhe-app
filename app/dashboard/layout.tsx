@@ -1,28 +1,11 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
+function SidebarNav({ userEmail, handleLogout }: { userEmail: string, handleLogout: () => void }) {
   const pathname = usePathname()
-  const [userEmail, setUserEmail] = useState('')
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        router.push('/login')
-      } else {
-        setUserEmail(session.user.email ?? '')
-      }
-    })
-  }, [router])
-
-  async function handleLogout() {
-    await supabase.auth.signOut()
-    router.push('/')
-  }
 
   const navItems = [
     { href: '/dashboard', label: 'All Jobs', icon: (
@@ -46,13 +29,66 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   ]
 
   return (
+    <>
+      <nav style={{ flex: 1, padding: '12px 10px' }}>
+        {navItems.map(item => {
+          const active = pathname === item.href
+          return (
+            <Link key={item.href} href={item.href} style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              padding: '10px 12px', borderRadius: '8px', marginBottom: '2px',
+              textDecoration: 'none',
+              background: active ? 'rgba(255,255,255,.12)' : 'transparent',
+              color: active ? '#fff' : 'rgba(255,255,255,.65)',
+              fontSize: '.9rem', fontWeight: active ? 600 : 400,
+            }}>
+              {item.icon}
+              {item.label}
+            </Link>
+          )
+        })}
+      </nav>
+      <div style={{ padding: '12px 10px', borderTop: '1px solid rgba(255,255,255,.1)' }}>
+        <div style={{ padding: '8px 12px', marginBottom: '4px' }}>
+          <p style={{ fontSize: '.75rem', color: 'rgba(255,255,255,.45)', marginBottom: '2px' }}>Logged in as</p>
+          <p style={{ fontSize: '.82rem', color: 'rgba(255,255,255,.8)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{userEmail}</p>
+        </div>
+        <button onClick={handleLogout} style={{
+          width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,.08)',
+          border: 'none', borderRadius: '8px', color: 'rgba(255,255,255,.65)',
+          fontSize: '.85rem', cursor: 'pointer', textAlign: 'left',
+        }}>Log out</button>
+      </div>
+    </>
+  )
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+  const [userEmail, setUserEmail] = useState('')
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.push('/login')
+      } else {
+        setUserEmail(session.user.email ?? '')
+      }
+    })
+  }, [router])
+
+  async function handleLogout() {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
+
+  return (
     <div style={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
       {/* Sidebar */}
       <aside style={{
         width: '220px', flexShrink: 0,
         background: 'var(--green-dark)',
         display: 'flex', flexDirection: 'column',
-        padding: '0',
       }}>
         {/* Logo */}
         <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid rgba(255,255,255,.1)' }}>
@@ -66,39 +102,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </Link>
         </div>
 
-        {/* Nav */}
-        <nav style={{ flex: 1, padding: '12px 10px' }}>
-          {navItems.map(item => {
-            const active = pathname === item.href
-            return (
-              <Link key={item.href} href={item.href} style={{
-                display: 'flex', alignItems: 'center', gap: '10px',
-                padding: '10px 12px', borderRadius: '8px', marginBottom: '2px',
-                textDecoration: 'none',
-                background: active ? 'rgba(255,255,255,.12)' : 'transparent',
-                color: active ? '#fff' : 'rgba(255,255,255,.65)',
-                fontSize: '.9rem', fontWeight: active ? 600 : 400,
-                transition: 'all .15s',
-              }}>
-                {item.icon}
-                {item.label}
-              </Link>
-            )
-          })}
-        </nav>
-
-        {/* User */}
-        <div style={{ padding: '12px 10px', borderTop: '1px solid rgba(255,255,255,.1)' }}>
-          <div style={{ padding: '8px 12px', marginBottom: '4px' }}>
-            <p style={{ fontSize: '.75rem', color: 'rgba(255,255,255,.45)', marginBottom: '2px' }}>Logged in as</p>
-            <p style={{ fontSize: '.82rem', color: 'rgba(255,255,255,.8)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{userEmail}</p>
-          </div>
-          <button onClick={handleLogout} style={{
-            width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,.08)',
-            border: 'none', borderRadius: '8px', color: 'rgba(255,255,255,.65)',
-            fontSize: '.85rem', cursor: 'pointer', textAlign: 'left',
-          }}>Log out</button>
-        </div>
+        <Suspense fallback={<div style={{ flex: 1 }} />}>
+          <SidebarNav userEmail={userEmail} handleLogout={handleLogout} />
+        </Suspense>
       </aside>
 
       {/* Main */}
