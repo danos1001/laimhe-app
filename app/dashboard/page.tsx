@@ -43,11 +43,6 @@ export default function DashboardPage() {
   const totalOutstanding = jobs.filter(j => j.status === 'awaiting_invoice').reduce((s, j) => s + (j.amount ?? 0), 0)
   const recentJobs = jobs.slice(0, 5)
 
-  const [greeting] = useState(() => {
-    const hour = new Date().getHours()
-    return hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
-  })
-
   const filters = [
     { key: 'all', label: 'All' },
     { key: 'enquiry', label: 'Enquiries' },
@@ -62,7 +57,7 @@ export default function DashboardPage() {
       {/* Greeting */}
       <div style={{ marginBottom: '28px' }}>
         <h1 style={{ fontSize: '1.6rem', fontWeight: 700, letterSpacing: '-.02em', marginBottom: '4px' }}>
-          {greeting}{userName ? `, ${userName}` : ''} 👋
+          {userName ? `Welcome back, ${userName} 👋` : 'Dashboard'}
         </h1>
         <p style={{ color: 'var(--fg-soft)', fontSize: '.9rem' }}>
           {activeJobs.length > 0
