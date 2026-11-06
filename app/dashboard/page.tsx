@@ -43,8 +43,10 @@ export default function DashboardPage() {
   const totalOutstanding = jobs.filter(j => j.status === 'awaiting_invoice').reduce((s, j) => s + (j.amount ?? 0), 0)
   const recentJobs = jobs.slice(0, 5)
 
-  const hour = new Date().getHours()
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  const [greeting] = useState(() => {
+    const hour = new Date().getHours()
+    return hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  })
 
   const filters = [
     { key: 'all', label: 'All' },
