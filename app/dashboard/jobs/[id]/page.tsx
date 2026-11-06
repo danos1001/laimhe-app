@@ -65,9 +65,14 @@ export default function JobDetailPage() {
             <span style={{ color: 'var(--fg-mid)', fontSize: '.9rem' }}>{job.location}</span>
           </div>
         </div>
-        <span style={{ padding: '5px 14px', borderRadius: '100px', fontSize: '.8rem', fontWeight: 700 }} className={STATUS_COLOURS[job.status]}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <Link href={`/dashboard/jobs/${id}/edit`} style={{ padding: '7px 16px', border: '1px solid var(--border-mid)', borderRadius: '100px', textDecoration: 'none', color: 'var(--fg-mid)', fontWeight: 600, fontSize: '.82rem' }}>
+            Edit
+          </Link>
+          <span style={{ padding: '5px 14px', borderRadius: '100px', fontSize: '.8rem', fontWeight: 700 }} className={STATUS_COLOURS[job.status]}>
           {STATUS_LABELS[job.status]}
-        </span>
+          </span>
+        </div>
       </div>
 
       {/* Status pipeline */}
