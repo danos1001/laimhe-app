@@ -1,14 +1,13 @@
 'use client'
 export const dynamic = 'force-dynamic'
-export const instant = false
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { supabase, Job, JobStatus, STATUS_LABELS, STATUS_COLOURS } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 
 const STATUSES: JobStatus[] = ['enquiry', 'quoted', 'scheduled', 'in_progress', 'awaiting_invoice', 'paid']
 
-export default function JobDetailPage() {
+function JobDetail() {
   const router = useRouter()
   const params = useParams()
   const id = params.id as string
@@ -148,5 +147,13 @@ export default function JobDetailPage() {
         </button>
       </div>
     </div>
+  )
+}
+
+export default function JobDetailPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: '32px', color: 'var(--fg-soft)' }}>Loading…</div>}>
+      <JobDetail />
+    </Suspense>
   )
 }

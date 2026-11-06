@@ -1,12 +1,11 @@
 'use client'
 export const dynamic = 'force-dynamic'
-export const instant = false
-import { useEffect, useState } from 'react'
-import { supabase, JOB_TYPES, Job } from '@/lib/supabase'
+import { useEffect, useState, Suspense } from 'react'
+import { supabase, JOB_TYPES } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function EditJobPage() {
+function EditJobForm() {
   const router = useRouter()
   const params = useParams()
   const id = params.id as string
@@ -150,5 +149,13 @@ export default function EditJobPage() {
         </div>
       </form>
     </div>
+  )
+}
+
+export default function EditJobPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: '32px', color: 'var(--fg-soft)' }}>Loading…</div>}>
+      <EditJobForm />
+    </Suspense>
   )
 }
