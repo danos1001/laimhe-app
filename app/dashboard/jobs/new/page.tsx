@@ -1,5 +1,6 @@
 'use client'
 export const dynamic = 'force-dynamic'
+export const instant = false
 import { useState } from 'react'
 import { supabase, JOB_TYPES } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
