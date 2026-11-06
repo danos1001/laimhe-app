@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { supabase, Job, JobStatus, STATUS_LABELS, STATUS_COLOURS } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
